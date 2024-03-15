@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: lingoda-case
+  namespace: lingoda-case-ns
 spec:
   replicas: 2  # You can adjust the number of replicas based on your needs
   selector:
