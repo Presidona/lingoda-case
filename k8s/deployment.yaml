@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lingoda-case
+spec:
+  replicas: 2  # You can adjust the number of replicas based on your needs
+  selector:
+    matchLabels:
+      app: lingoda-case
+  template:
+    metadata:
+      labels:
+        app: lingoda-case
+    spec:
+      containers:
+      - name: lingoda-case
+        image: rimgbulldo/symfony-demo:latest  # Updated Docker image path
+        ports:
+        - containerPort: 80  # The port your container is set to listen on
+
