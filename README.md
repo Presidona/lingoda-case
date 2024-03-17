@@ -1,10 +1,11 @@
-# Symfony Demo Application Deployment in Kubernetes
+# Symfony Demo Application Deployment in Kubernetes (Minikube)
 
-This README outlines the process for deploying the Symfony Demo application within a Kubernetes environment. The procedure includes database setup, application deployment, database migrations, and auto-scaling implementation.
+This README outlines the process for deploying the Symfony Demo application within a Kubernetes environment using Minikube. The procedure includes database setup, application deployment, database migrations, and auto-scaling implementation.
 
 ## Prerequisites
 
-- A Kubernetes cluster
+- Minikube
+- A Kubernetes cluster (provided by Minikube)
 - `kubectl` CLI installed and configured to communicate with your cluster
 - Docker image of the Symfony application ready in a registry
 
@@ -82,10 +83,25 @@ Set up auto-scaling for the Symfony application pods based on CPU and memory usa
 kubectl apply -f hpa.yaml
 ```
 
-## Accessing the Application
+### Accessing the Application
 
-Determine the external IP or domain to access your Symfony application by querying the service.
+To access the application, first ensure that Minikube is running and that your application is deployed correctly. Then, use the following command to find the Minikube IP and the service port:
 
 ```bash
-kubectl get svc -n lingoda-app-ns
+minikube service lingoda-app-service --url -n lingoda-app-ns
+```
+
+This command will provide you with a URL that you can use to access your Symfony application in a web browser.
+
+### Cleanup
+
+To remove all deployed resources from your cluster:
+
+```bash
+kubectl delete -f namespace.yaml
+kubectl delete -f postgres-pvc.yaml
+kubectl delete -f deployment.yaml
+kubectl delete -f service.yaml
+kubectl delete -f db-migration-job.yaml
+kubectl delete -f hpa.yaml
 ```
