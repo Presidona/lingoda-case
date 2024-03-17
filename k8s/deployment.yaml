@@ -1,21 +1,61 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: lingoda-case
-  namespace: lingoda-case-ns
+  name: lingoda-app
+  namespace: lingoda-app-ns
 spec:
   replicas: 2  # You can adjust the number of replicas based on your needs
   selector:
     matchLabels:
-      app: lingoda-case
+      app: lingoda-app
   template:
     metadata:
       labels:
-        app: lingoda-case
+        app: lingoda-app
     spec:
       containers:
-      - name: lingoda-case
+      - name: lingoda-app
         image: rimgbulldo/symfony-demo:latest  # Updated Docker image path
         ports:
         - containerPort: 80  # The port your container is set to listen on
+        env:
+          - name: DATABASE_URL
+            valueFrom:
+              configMapKeyRef:
+                name: app-config  # Assumes you have a ConfigMap named app-config
+                key: database_url
+---
 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lingoda-postgres
+spec:
+  selector:
+    matchLabels:
+      app: lingoda-postgres
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: lingoda-postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres
+        env:
+        - name: POSTGRES_PASSWORD
+          value: "lingodAMar7ba2024"
+        - name: POSTGRES_USER
+          value: "postgres"
+        - name: POSTGRES_DB
+          value: "lingoda_db"
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgres-storage
+      volumes:
+      - name: postgres-storage
+        persistentVolumeClaim:
+          claimName: postgres-pvc

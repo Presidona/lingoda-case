@@ -1,12 +1,25 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: lingoda-case-service
-  namespace: lingoda-case-ns
+  name: lingoda-app-service
+  namespace: lingoda-app-ns
 spec:
   type: LoadBalancer
   ports:
   - port: 80
     targetPort: 80
   selector:
-    app: lingoda-case
+    app: lingoda-app
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: lingoda-postgres
+spec:
+  ports:
+  - port: 5432
+  selector:
+    app: lingoda-postgres
+  type: ClusterIP

@@ -24,7 +24,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 /**
  * This application uses by default an SQLite database to store its information.
  * That's why the 'sqlite3' extension must be enabled in PHP. This event
- * subscriber listens to console events and in case of an exception caused by
+ * subscriber listens to console events and in app of an exception caused by
  * a disabled 'sqlite3' extension, it displays a meaningful error message.
  *
  * @author Javier Eguiluz <javier.eguiluz@gmail.com>
