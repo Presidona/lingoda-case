@@ -1,88 +1,91 @@
-Symfony Demo Application
-========================
+# Symfony Demo Application Deployment in Kubernetes
 
-The "Symfony Demo Application" is a reference application created to show how
-to develop applications following the [Symfony Best Practices][1].
+This README outlines the process for deploying the Symfony Demo application within a Kubernetes environment. The procedure includes database setup, application deployment, database migrations, and auto-scaling implementation.
 
-You can also learn about these practices in [the official Symfony Book][5].
+## Prerequisites
 
-Requirements
-------------
+- A Kubernetes cluster
+- `kubectl` CLI installed and configured to communicate with your cluster
+- Docker image of the Symfony application ready in a registry
 
-  * PHP 8.2.0 or higher;
-  * PDO-SQLite PHP extension enabled;
-  * and the [usual Symfony application requirements][2].
+## Deployment Procedure
 
-Installation
-------------
+### Step 1: Create Namespace
 
-There are 3 different ways of installing this project depending on your needs:
-
-**Option 1.** [Download Symfony CLI][4] and use the `symfony` binary installed
-on your computer to run this command:
+Start by creating a dedicated namespace for your application.
 
 ```bash
-symfony new --demo my_project
+kubectl apply -f namespace.yaml
 ```
 
-**Option 2.** [Download Composer][6] and use the `composer` binary installed
-on your computer to run these commands:
+### Step 2: Set Up the Database
+
+Deploy PostgreSQL as the database for the Symfony application.
+
+#### Persistent Volume Claim
+
+Create a Persistent Volume Claim (PVC) for database storage persistence.
 
 ```bash
-# you can create a new project based on the Symfony Demo project...
-composer create-project symfony/symfony-demo my_project
-
-# ...or you can clone the code repository and install its dependencies
-git clone https://github.com/symfony/demo.git my_project
-cd my_project/
-composer install
+kubectl apply -f postgres-pvc.yaml
 ```
 
-**Option 3.** Click the following button to deploy this project on Platform.sh,
-the official Symfony PaaS, so you can try it without installing anything locally:
+#### Deployment and Service
 
-<p align="center">
-<a href="https://console.platform.sh/projects/create-project?template=https://raw.githubusercontent.com/symfonycorp/platformsh-symfony-template-metadata/main/symfony-demo.template.yaml&utm_content=symfonycorp&utm_source=github&utm_medium=button&utm_campaign=deploy_on_platform"><img src="https://platform.sh/images/deploy/lg-blue.svg" alt="Deploy on Platform.sh" width="180px" /></a>
-</p>
-
-Usage
------
-
-There's no need to configure anything before running the application. There are
-2 different ways of running this application depending on your needs:
-
-**Option 1.** [Download Symfony CLI][4] and run this command:
+Deploy the PostgreSQL database and expose it within the cluster.
 
 ```bash
-cd my_project/
-symfony serve
+# Apply PostgreSQL Deployment
+kubectl apply -f deployment.yaml
+
+# Apply PostgreSQL Service
+kubectl apply -f service.yaml
 ```
 
-Then access the application in your browser at the given URL (<https://localhost:8000> by default).
+Make sure to adjust `deployment.yaml` and `service.yaml` if they contain more resources than just the PostgreSQL components.
 
-**Option 2.** Use a web server like Nginx or Apache to run the application
-(read the documentation about [configuring a web server for Symfony][3]).
+### Step 3: Application Configuration
 
-On your local machine, you can run this command to use the built-in PHP web server:
+Configure the application using a ConfigMap for environment variables.
 
 ```bash
-cd my_project/
-php -S localhost:8000 -t public/
+kubectl apply -f configmap.yaml
 ```
 
-Tests
------
+### Step 4: Deploy Symfony Application
 
-Execute this command to run tests:
+Deploy your Symfony application to the Kubernetes cluster.
 
 ```bash
-cd my_project/
-./bin/phpunit
+kubectl apply -f deployment.yaml
 ```
 
-[1]: https://symfony.com/doc/current/best_practices.html
-[2]: https://symfony.com/doc/current/setup.html#technical-requirements
-[3]: https://symfony.com/doc/current/setup/web_server_configuration.html
-[4]: https://symfony.com/download
-[5]: https://symfony.com/book
-[6]: https://getcomposer.org/
+Expose the Symfony application through a service.
+
+```bash
+kubectl apply -f service.yaml
+```
+
+### Step 5: Database Migration
+
+Execute database migrations using a Kubernetes job.
+
+```bash
+kubectl apply -f db-migration-job.yaml
+```
+
+### Step 6: Implement Auto-Scaling
+
+Set up auto-scaling for the Symfony application pods based on CPU and memory usage.
+
+```bash
+kubectl apply -f hpa.yaml
+```
+
+## Accessing the Application
+
+Determine the external IP or domain to access your Symfony application by querying the service.
+
+```bash
+kubectl get svc -n lingoda-app-ns
+```

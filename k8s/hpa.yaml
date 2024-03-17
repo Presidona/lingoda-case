@@ -1,0 +1,13 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: lingoda-app-hpa
+  namespace: lingoda-app-ns
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: lingoda-app
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
