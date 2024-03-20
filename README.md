@@ -133,7 +133,7 @@ To seamlessly integrate database migrations into your deployment process:
 
 This approach ensures that your database schema is always compatible with the application code, preventing downtime and preserving data integrity.
 
-# Task 3: Scaling Concerns and Implementations
+## Task 3: Scaling Concerns and Implementations
 
 ## Objective
 
