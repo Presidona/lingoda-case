@@ -4,7 +4,7 @@ metadata:
   name: lingoda-app
   namespace: lingoda-app-ns
 spec:
-  replicas: 2  # You can adjust the number of replicas based on your needs
+  replicas: 2
   selector:
     matchLabels:
       app: lingoda-app
@@ -14,18 +14,18 @@ spec:
         app: lingoda-app
     spec:
       containers:
-      - name: lingoda-app
-        image: rimgbulldo/symfony-demo:latest  # Updated Docker image path
-        ports:
-        - containerPort: 80  # The port your container is set to listen on
-        env:
-          - name: DATABASE_URL
-            valueFrom:
-              configMapKeyRef:
-                name: app-config  # Assumes you have a ConfigMap named app-config
-                key: database_url
----
+        - name: lingoda-app
+          image: rimgbulldo/symfony-demo:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: database-url
 
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -41,21 +41,24 @@ spec:
         app: lingoda-postgres
     spec:
       containers:
-      - name: postgres
-        image: postgres
-        env:
-        - name: POSTGRES_PASSWORD
-          value: "lingodAMar7ba2024"
-        - name: POSTGRES_USER
-          value: "postgres"
-        - name: POSTGRES_DB
-          value: "lingoda_db"
-        ports:
-        - containerPort: 5432
-        volumeMounts:
-        - mountPath: /var/lib/postgresql/data
-          name: postgres-storage
+        - name: postgres
+          image: postgres
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: postgres-password
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_DB
+              value: "lingoda_db"
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-storage
       volumes:
-      - name: postgres-storage
-        persistentVolumeClaim:
-          claimName: postgres-pvc
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pvc

@@ -6,15 +6,15 @@ spec:
   template:
     spec:
       containers:
-      - name: db-migration
-        image: rimgbulldo/symfony-demo:latest  # Ensure this is up-to-date
-        command: ["php", "bin/console", "doctrine:migrations:migrate", "--no-interaction"]
-        env:
-          - name: APP_ENV
-            value: "prod"
-          - name: DATABASE_URL
-            value: "postgresql://postgres:lingodAMar7ba2024@lingoda-postgres:5432/lingoda_db?serverVersion=13&charset=utf8"
-          # Add other necessary environment variables below
-          # - name: ANOTHER_ENV_VAR
-          #   value: "value"
+        - name: db-migration
+          image: rimgbulldo/symfony-demo:latest
+          command: ["php", "bin/console", "doctrine:migrations:migrate", "--no-interaction"]
+          env:
+            - name: APP_ENV
+              value: "prod"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: database-url
       restartPolicy: Never
