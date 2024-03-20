@@ -210,14 +210,6 @@ kubectl apply -f hpa.yaml
 
 5. For database scaling, if replication or sharding is implemented, monitor the database performance and replication lag to ensure queries are efficiently distributed without creating bottlenecks.
 
-### Documentation and Rationale
-
-The choice of HPA for the Symfony application is based on its ability to respond to workload changes dynamically, ensuring that resources are efficiently utilized without over-provisioning. This approach enhances the application's availability and responsiveness under different load conditions. For the database, replication ensures read operations are spread across multiple instances, mitigating potential bottlenecks as read volume increases.
-
-These scaling strategies are aligned with Kubernetes best practices, offering a balance between performance, resource efficiency, and operational simplicity.
-
-Given the context of an interview test case, it's essential to communicate not just the "how" but also the "why" behind your approach. Your README file serves as the blueprint for understanding your deployment strategy, your decision-making process, and your adherence to Kubernetes best practices. Here's a tailored conclusion to reflect these aspects:
-
 ## Conclusion and Reflection
 
 This README encapsulates my journey through deploying the Symfony Demo Application within a Kubernetes environment using Minikube. Throughout this process, I aimed not only to demonstrate technical proficiency but also to articulate the rationale behind each decision, aligning with Kubernetes' best practices.
